@@ -1,0 +1,197 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-display: var(--font-cinzel), serif;
+  --font-body: var(--font-cormorant), serif;
+  --font-script: var(--font-script), cursive;
+
+  --color-night: #0b1224;
+  --color-night-deep: #050814;
+  --color-royal: #4a1d6b;
+  --color-royal-deep: #2a1040;
+  --color-royal-mid: #6b3aa0;
+  --color-gold: #e8c547;
+  --color-gold-bright: #ffe9a3;
+  --color-lantern: #ffb347;
+  --color-lantern-glow: #ffd27a;
+  --color-parchment: #f4e6c8;
+  --color-parchment-deep: #e5d0a1;
+  --color-ink: #3a2718;
+  --color-ink-soft: #6b4e32;
+  --color-forest: #1e3d2f;
+
+  --animate-twinkle: twinkle 3s ease-in-out infinite;
+  --animate-float-lantern: float-lantern 8s ease-in-out infinite;
+  --animate-drift-lantern: drift-lantern 14s ease-in-out infinite;
+  --animate-rise-lantern: rise-lantern 20s linear infinite;
+  --animate-glow-pulse: glow-pulse 2.8s ease-in-out infinite;
+  --animate-writing-speck: writing-speck 0.7s ease-out 1 both;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes float-lantern {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(-4deg);
+  }
+  35% {
+    transform: translate(7px, -16px) rotate(3deg);
+  }
+  70% {
+    transform: translate(-6px, -9px) rotate(-2deg);
+  }
+}
+
+@keyframes drift-lantern {
+  0%,
+  100% {
+    transform: translate3d(0, 10px, 0);
+  }
+  50% {
+    transform: translate3d(8px, -18px, 0);
+  }
+}
+
+@keyframes rise-lantern {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(-3deg);
+  }
+  25% {
+    transform: translate3d(var(--lantern-sway, 12px), calc(-25dvh - 40px), 0)
+      rotate(2deg);
+  }
+  50% {
+    transform: translate3d(
+        calc(var(--lantern-sway, 12px) * -0.7),
+        calc(-50dvh - 80px),
+        0
+      )
+      rotate(-2deg);
+  }
+  75% {
+    transform: translate3d(var(--lantern-sway, 12px), calc(-75dvh - 120px), 0)
+      rotate(3deg);
+  }
+  100% {
+    transform: translate3d(0, calc(-100dvh - 180px), 0) rotate(-1deg);
+  }
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 16px #ffd27aee);
+  }
+  50% {
+    filter: drop-shadow(0 0 32px #ffe08a);
+  }
+}
+
+@keyframes writing-speck {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--spark-x, 8px), var(--spark-y, -12px)) scale(0.2);
+  }
+}
+
+@keyframes enchanted-ink {
+  0% {
+    opacity: 0;
+    color: #f0c94a;
+    text-shadow: 0 0 10px #e8c547;
+  }
+  100% {
+    opacity: 1;
+    color: inherit;
+    text-shadow: none;
+  }
+}
+
+.enchanted-glyph {
+  display: inline-block;
+  animation: enchanted-ink 0.45s ease forwards;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--color-night-deep);
+  color: var(--color-parchment);
+  font-family: var(--font-body);
+}
+
+.paper {
+  background-color: var(--color-parchment);
+  background-image:
+    radial-gradient(ellipse at 18% 8%, rgba(255, 255, 255, 0.4), transparent 46%),
+    radial-gradient(ellipse at 88% 92%, rgba(160, 96, 40, 0.14), transparent 52%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 27px,
+      rgba(90, 50, 20, 0.035) 28px
+    );
+}
+
+.leather {
+  background-color: #3d1760;
+  background-image:
+    radial-gradient(ellipse at 50% 12%, rgba(232, 197, 71, 0.22), transparent 40%),
+    radial-gradient(ellipse at 18% 78%, rgba(0, 0, 0, 0.38), transparent 52%),
+    repeating-linear-gradient(
+      122deg,
+      transparent 0,
+      transparent 2px,
+      rgba(0, 0, 0, 0.045) 3px
+    ),
+    linear-gradient(160deg, #6a2a90 0%, #3d1760 44%, #241036 100%);
+}
+
+.leather-spine {
+  background: linear-gradient(
+    90deg,
+    #140814 0%,
+    #3a1558 22%,
+    #4a1d6b 50%,
+    #2a1040 78%,
+    #120610 100%
+  );
+}
+
+.page-edge {
+  background: repeating-linear-gradient(
+    90deg,
+    #f7ead0 0px,
+    #efe0bc 1px,
+    #d9c394 2px,
+    #f3e4c4 3px
+  );
+  box-shadow: inset -2px 0 4px rgba(90, 50, 20, 0.18);
+}
+
+.book-ribbon {
+  background: linear-gradient(90deg, #7a1838, #c44569, #7a1838);
+  box-shadow: 1px 4px 8px rgba(0, 0, 0, 0.35);
+}
+
+.book-scene {
+  perspective: 1800px;
+  perspective-origin: 50% 45%;
+}
