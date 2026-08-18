@@ -66,10 +66,13 @@ function DustRibbon({
       return;
     }
 
-    const context = canvas.getContext("2d");
-    if (!context) {
+    const surface: HTMLCanvasElement = canvas;
+    const host: HTMLElement = wrap;
+    const maybeContext = surface.getContext("2d");
+    if (!maybeContext) {
       return;
     }
+    const context: CanvasRenderingContext2D = maybeContext;
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const particles: Particle[] = [];
@@ -81,14 +84,14 @@ function DustRibbon({
     let lastOrigin: { x: number; y: number } | null = null;
 
     function resize() {
-      const box = wrap.getBoundingClientRect();
+      const box = host.getBoundingClientRect();
       const nextWidth = Math.max(1, (box.width + 80) * dpr);
       const nextHeight = Math.max(1, (box.height + 80) * dpr);
       if (nextWidth === lastW && nextHeight === lastH) {
         return;
       }
-      canvas.width = nextWidth;
-      canvas.height = nextHeight;
+      surface.width = nextWidth;
+      surface.height = nextHeight;
       lastW = nextWidth;
       lastH = nextHeight;
     }
@@ -98,10 +101,10 @@ function DustRibbon({
       if (!tip) {
         return null;
       }
-      const canvasBox = canvas.getBoundingClientRect();
+      const canvasBox = surface.getBoundingClientRect();
       const tipBox = tip.getBoundingClientRect();
-      const scaleX = canvas.width / canvasBox.width;
-      const scaleY = canvas.height / canvasBox.height;
+      const scaleX = surface.width / canvasBox.width;
+      const scaleY = surface.height / canvasBox.height;
       return {
         x: (tipBox.left - canvasBox.left + tipBox.width / 2) * scaleX,
         y: (tipBox.top - canvasBox.top + tipBox.height * 0.42) * scaleY,
@@ -200,8 +203,8 @@ function DustRibbon({
 
     const draw = (now: number) => {
       resize();
-      const width = canvas.width;
-      const height = canvas.height;
+      const width = surface.width;
+      const height = surface.height;
       context.clearRect(0, 0, width, height);
 
       const origin = tipInCanvas();
