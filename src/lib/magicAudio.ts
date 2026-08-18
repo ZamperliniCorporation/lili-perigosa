@@ -50,10 +50,14 @@ function panNode(amount: number) {
   if (!audio || !master) {
     return master;
   }
-  const pan = audio.createStereoPanner();
-  pan.pan.value = amount;
-  pan.connect(master);
-  return pan;
+  try {
+    const pan = audio.createStereoPanner();
+    pan.pan.value = amount;
+    pan.connect(master);
+    return pan;
+  } catch {
+    return master;
+  }
 }
 
 function playBell(
@@ -282,7 +286,7 @@ function startBackgroundMusic() {
   if (!track) {
     track = new Audio(MUSIC_SRC);
     track.loop = false;
-    track.preload = "auto";
+    track.preload = "metadata";
     track.volume = 0.42;
     track.addEventListener("timeupdate", () => {
       if (!track || muted || !Number.isFinite(track.duration) || track.duration <= 0) {

@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Lantern } from "@/components/lanterns/Lantern";
 
 const AMBIENT = [
@@ -31,11 +34,25 @@ type AmbientLanternsProps = {
 };
 
 export function AmbientLanterns({ sides = false }: AmbientLanternsProps) {
+  const [compact, setCompact] = useState(false);
   const lanterns = sides ? SIDES : AMBIENT;
+  const visible = compact ? lanterns.filter((_, index) => index % 2 === 0) : lanterns;
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const sync = () => setCompact(media.matches);
+    sync();
+    if (typeof media.addEventListener === "function") {
+      media.addEventListener("change", sync);
+      return () => media.removeEventListener("change", sync);
+    }
+    media.addListener(sync);
+    return () => media.removeListener(sync);
+  }, []);
 
   return (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-      {lanterns.map((lantern) => (
+      {visible.map((lantern) => (
         <div
           key={lantern.id}
           className="absolute animate-rise-lantern"
@@ -51,7 +68,7 @@ export function AmbientLanterns({ sides = false }: AmbientLanternsProps) {
             } as React.CSSProperties
           }
         >
-          <Lantern className="h-full w-full" dim={lantern.dim} />
+          <Lantern className="h-full w-full" dim={lantern.dim} quiet={compact} />
         </div>
       ))}
     </div>

@@ -6,6 +6,7 @@ type LanternProps = {
   special?: boolean;
   dim?: boolean;
   out?: boolean;
+  quiet?: boolean;
   className?: string;
 };
 
@@ -29,6 +30,7 @@ export function Lantern({
   special = false,
   dim = false,
   out = false,
+  quiet = false,
   className = "",
 }: LanternProps) {
   const id = useId().replace(/:/g, "");
@@ -40,46 +42,50 @@ export function Lantern({
 
   return (
     <div className={`relative ${className}`}>
-      <div
-        className={`absolute bottom-[-6%] left-1/2 -translate-x-1/2 rounded-full blur-3xl transition-opacity duration-700 ${
-          out
-            ? "h-[40%] w-[90%] bg-[#2a1a10]/0 opacity-0"
-            : special
-              ? "h-[75%] w-[150%] bg-[#ffd27a]/90"
-              : dim
-                ? "h-[58%] w-[120%] bg-[#ffd27a]/60"
-                : "h-[68%] w-[140%] bg-[#ffd27a]/80"
-        }`}
-      />
-      <div
-        className={`absolute bottom-[2%] left-1/2 -translate-x-1/2 rounded-full blur-xl transition-opacity duration-700 ${
-          out
-            ? "opacity-0"
-            : special
-              ? "h-[42%] w-[85%] bg-[#fff1b0]/85"
-              : dim
-                ? "h-[36%] w-[72%] bg-[#ffe08a]/55"
-                : "h-[40%] w-[80%] bg-[#ffe08a]/75"
-        }`}
-      />
-      <div
-        className={`absolute top-[18%] left-1/2 -translate-x-1/2 rounded-full blur-2xl transition-opacity duration-700 ${
-          out
-            ? "opacity-0"
-            : special
-              ? "h-[62%] w-[95%] bg-[#ffd27a]/50"
-              : dim
-                ? "h-[50%] w-[78%] bg-[#ffd27a]/28"
-                : "h-[58%] w-[88%] bg-[#ffd27a]/42"
-        }`}
-      />
+      {quiet ? null : (
+        <>
+          <div
+            className={`absolute bottom-[-6%] left-1/2 -translate-x-1/2 rounded-full blur-3xl transition-opacity duration-700 ${
+              out
+                ? "h-[40%] w-[90%] bg-[#2a1a10]/0 opacity-0"
+                : special
+                  ? "h-[75%] w-[150%] bg-[#ffd27a]/90"
+                  : dim
+                    ? "h-[58%] w-[120%] bg-[#ffd27a]/60"
+                    : "h-[68%] w-[140%] bg-[#ffd27a]/80"
+            }`}
+          />
+          <div
+            className={`absolute bottom-[2%] left-1/2 -translate-x-1/2 rounded-full blur-xl transition-opacity duration-700 ${
+              out
+                ? "opacity-0"
+                : special
+                  ? "h-[42%] w-[85%] bg-[#fff1b0]/85"
+                  : dim
+                    ? "h-[36%] w-[72%] bg-[#ffe08a]/55"
+                    : "h-[40%] w-[80%] bg-[#ffe08a]/75"
+            }`}
+          />
+          <div
+            className={`absolute top-[18%] left-1/2 -translate-x-1/2 rounded-full blur-2xl transition-opacity duration-700 ${
+              out
+                ? "opacity-0"
+                : special
+                  ? "h-[62%] w-[95%] bg-[#ffd27a]/50"
+                  : dim
+                    ? "h-[50%] w-[78%] bg-[#ffd27a]/28"
+                    : "h-[58%] w-[88%] bg-[#ffd27a]/42"
+            }`}
+          />
+        </>
+      )}
       <svg
         viewBox="0 0 80 128"
         className={`relative h-full w-full transition-[filter] duration-700 ${
-          out
+          out || quiet
             ? "drop-shadow-none"
             : "drop-shadow-[0_0_22px_rgba(255,210,122,0.9)]"
-        } ${special && lit ? "animate-glow-pulse" : ""}`}
+        } ${special && lit && !quiet ? "animate-glow-pulse" : ""}`}
         aria-hidden="true"
       >
         <defs>

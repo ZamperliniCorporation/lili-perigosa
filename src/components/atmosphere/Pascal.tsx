@@ -77,7 +77,7 @@ export function Pascal({
         alt=""
         className={`pointer-events-none select-none ${photo.className} ${
           flip ? "-scale-x-100" : ""
-        } drop-shadow-[0_6px_10px_rgba(0,0,0,0.5)]`}
+        }`}
         draggable={false}
       />
     </motion.button>

@@ -22,16 +22,22 @@ type StoryBookProps = {
   footer?: React.ReactNode;
 };
 
+function subscribeMedia(query: string, onChange: (matches: boolean) => void) {
+  const media = window.matchMedia(query);
+  const sync = () => onChange(media.matches);
+  sync();
+  if (typeof media.addEventListener === "function") {
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }
+  media.addListener(sync);
+  return () => media.removeListener(sync);
+}
+
 function useWideScreen() {
   const [wide, setWide] = useState(false);
 
-  useEffect(() => {
-    const media = window.matchMedia("(min-width: 768px)");
-    const sync = () => setWide(media.matches);
-    sync();
-    media.addEventListener("change", sync);
-    return () => media.removeEventListener("change", sync);
-  }, []);
+  useEffect(() => subscribeMedia("(min-width: 768px)", setWide), []);
 
   return wide;
 }
@@ -62,7 +68,14 @@ export function StoryBook({
   const chapterRef = useRef(chapterIndex);
   const [inkDelay, setInkDelay] = useState(800);
   const [pascalReady, setPascalReady] = useState(true);
+  const [mountLeaves, setMountLeaves] = useState(isOpen);
   const closed = !isOpen;
+
+  useEffect(() => {
+    if (isOpen) {
+      setMountLeaves(true);
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     const justOpened = !openRef.current && isOpen;
@@ -116,7 +129,7 @@ export function StoryBook({
     <div className="relative z-10 flex flex-col items-center px-6">
       <div className="book-scene">
         <motion.div
-          className="relative h-[min(74dvh,40rem)] w-[min(86vw,26rem)] overflow-visible"
+          className="relative h-[min(74vh,40rem)] max-h-[74dvh] w-[min(86vw,26rem)] overflow-visible"
           style={{ transformStyle: "preserve-3d" }}
           initial={{ opacity: 0, y: 28, rotateY: -18, rotateX: 8 }}
           animate={{
@@ -126,10 +139,16 @@ export function StoryBook({
             rotateX: isOpen ? 0 : 8,
             x: isOpen && wide ? 180 : 0,
           }}
-          whileHover={isOpen ? undefined : { y: -8, rotateY: showBack ? 12 : -12 }}
+          whileHover={
+            wide && !isOpen
+              ? { y: -8, rotateY: showBack ? 12 : -12 }
+              : undefined
+          }
           transition={{ duration: isOpen ? 1.35 : 0.8, ease: coverEase }}
         >
-          <div className={`pointer-events-none absolute -bottom-8 h-10 rounded-[100%] bg-black/55 blur-xl ${showBack ? "right-[8%] left-[4%]" : "left-[8%] right-[4%]"}`} />
+          <div
+            className={`pointer-events-none absolute -bottom-8 h-8 rounded-[100%] bg-black/40 ${showBack ? "right-[8%] left-[4%]" : "left-[8%] right-[4%]"}`}
+          />
 
           <div
             className="absolute inset-0 origin-left rounded-[2px] shadow-[0_28px_50px_rgba(0,0,0,0.45)]"
@@ -163,7 +182,8 @@ export function StoryBook({
             transition={{ duration: 0.3 }}
           />
 
-          {chapters.map((page, index) => {
+          {mountLeaves
+            ? chapters.map((page, index) => {
             const turned = isOpen && index < chapterIndex;
             const current = isOpen && index === chapterIndex;
 
@@ -182,7 +202,7 @@ export function StoryBook({
               >
                 <div
                   className="absolute inset-0"
-                  style={{ backfaceVisibility: "hidden" }}
+                  style={{ backfaceVisibility: "hidden", transformStyle: "flat" }}
                 >
                   <BookPageSheet
                     page={page}
@@ -195,15 +215,18 @@ export function StoryBook({
                   style={{
                     backfaceVisibility: "hidden",
                     transform: "rotateY(180deg)",
+                    transformStyle: "flat",
                   }}
                 >
                   <PageBack />
                 </div>
               </motion.div>
             );
-          })}
+          })
+            : null}
 
-          {[0, 1].map((leaf) => (
+          {mountLeaves
+            ? [0, 1].map((leaf) => (
             <motion.div
               key={`flyleaf-${leaf}`}
               className="pointer-events-none absolute inset-0"
@@ -222,19 +245,21 @@ export function StoryBook({
             >
               <div
                 className="paper absolute inset-0 rounded-[2px]"
-                style={{ backfaceVisibility: "hidden" }}
+                style={{ backfaceVisibility: "hidden", transformStyle: "flat" }}
               />
               <div
                 className="absolute inset-0"
                 style={{
                   backfaceVisibility: "hidden",
                   transform: "rotateY(180deg)",
+                  transformStyle: "flat",
                 }}
               >
                 <PageBack />
               </div>
             </motion.div>
-          ))}
+          ))
+            : null}
 
           <motion.button
             type="button"
@@ -257,7 +282,7 @@ export function StoryBook({
           >
             <div
               className="absolute inset-0 overflow-hidden rounded-[2px] border-2 border-gold/80 shadow-[0_0_28px_rgba(232,197,71,0.16)]"
-              style={{ backfaceVisibility: "hidden" }}
+              style={{ backfaceVisibility: "hidden", transformStyle: "flat" }}
             >
               {showBack ? (
                 <BackCoverArt page={back} active={showBack} writeDelay={1100} />
@@ -270,13 +295,17 @@ export function StoryBook({
               style={{
                 backfaceVisibility: "hidden",
                 transform: "rotateY(180deg)",
+                transformStyle: "flat",
               }}
             >
               <PageBack />
             </div>
           </motion.button>
 
-          <div className="pointer-events-none absolute inset-0 z-[80] overflow-visible">
+          <div
+            className="pointer-events-none absolute inset-0 z-[80] overflow-visible"
+            style={{ transformStyle: "flat" }}
+          >
             {pascalReady && closed ? (
               <Pascal
                 spot={showBack ? "bottom-left" : "bottom-right"}

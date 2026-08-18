@@ -249,7 +249,7 @@ export const story: StoryPage[] = [
     cta: "Soltar a lanterna",
     items: [
       { id: "d1", photo: "/assets/dedications/01.jpeg", from: "Zamp", caption: "Você apareceu do nada e mudou a minha forma de ver a vida, te amo muito gatona!" },
-      { id: "d2", photo: "/assets/dedications/02.jpg", caption: "A frase desta dedicatória entra aqui." },
+      { id: "d2", photo: "/assets/dedications/02.jpeg", from: "Dani", caption: "Entre risos,segredos e momentos que nunca vão se apagar, a nossa amizade se tornou uma das coisas mais bonitas que a vida me deu." },
       { id: "d3", photo: "/assets/dedications/03.jpg", caption: "A frase desta dedicatória entra aqui." },
       { id: "d4", photo: "/assets/dedications/04.jpg", caption: "A frase desta dedicatória entra aqui." },
       { id: "d5", photo: "/assets/dedications/05.jpg", caption: "A frase desta dedicatória entra aqui." },

@@ -74,7 +74,8 @@ function DustRibbon({
     }
     const context: CanvasRenderingContext2D = maybeContext;
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr =
+      window.innerWidth < 768 ? 1 : Math.min(window.devicePixelRatio || 1, 2);
     const particles: Particle[] = [];
     const trail: TrailPoint[] = [];
     let frame = 0;
@@ -85,8 +86,8 @@ function DustRibbon({
 
     function resize() {
       const box = host.getBoundingClientRect();
-      const nextWidth = Math.max(1, (box.width + 80) * dpr);
-      const nextHeight = Math.max(1, (box.height + 80) * dpr);
+      const nextWidth = Math.max(1, Math.round((box.width + 80) * dpr));
+      const nextHeight = Math.max(1, Math.round((box.height + 80) * dpr));
       if (nextWidth === lastW && nextHeight === lastH) {
         return;
       }

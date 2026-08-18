@@ -18,10 +18,11 @@ export function MemoryModal({
   const [missing, setMissing] = useState(false);
   const [ratio, setRatio] = useState<number | null>(null);
   const wide = (ratio ?? 0) >= 1.05;
+  const compact = Boolean(memory.from);
 
   return (
     <motion.div
-      className="absolute inset-0 z-50 flex items-center justify-center px-5"
+      className="absolute inset-0 z-50 flex items-center justify-center px-4 py-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -40,23 +41,23 @@ export function MemoryModal({
         animate={{ y: 0, scale: 1, opacity: 1 }}
         exit={{ y: 16, scale: 0.96, opacity: 0 }}
         transition={{ duration: 0.32, ease: [0.22, 0.72, 0.28, 1] }}
-        className={`paper relative z-10 w-fit min-w-[18rem] overflow-hidden rounded-sm border-2 border-gold/70 px-5 pt-5 pb-6 shadow-[0_0_40px_rgba(232,197,71,0.22)] ${
+        className={`paper relative z-10 flex w-fit min-w-[18rem] max-h-[92dvh] flex-col overflow-hidden rounded-sm border-2 border-gold/70 px-5 pt-4 pb-4 shadow-[0_0_40px_rgba(232,197,71,0.22)] ${
           wide ? "max-w-[min(92vw,52rem)]" : "max-w-[min(92vw,28rem)]"
         }`}
       >
         {memory.from ? (
-          <div className="mb-4 text-center">
+          <div className="mb-3 shrink-0 text-center">
             <p className="font-display text-[0.65rem] tracking-[0.32em] text-royal-mid uppercase">
               de
             </p>
-            <p className="mt-1 font-script text-4xl leading-none text-royal sm:text-5xl">
+            <p className="mt-1 font-script text-3xl leading-none text-royal sm:text-5xl">
               {memory.from}
             </p>
           </div>
         ) : null}
-        <div className="overflow-hidden rounded-sm border border-gold/40">
+        <div className="min-h-0 flex-1 overflow-hidden rounded-sm border border-gold/40">
           {missing ? (
-            <div className="flex aspect-[4/5] w-72 items-center justify-center bg-[linear-gradient(160deg,#2a1040,#1a0a28)] px-6 text-center">
+            <div className="flex aspect-[4/5] max-h-[38dvh] w-72 items-center justify-center bg-[linear-gradient(160deg,#2a1040,#1a0a28)] px-6 text-center">
               <p className="font-display text-xs tracking-[0.24em] text-gold/70 uppercase">
                 A foto entra aqui
               </p>
@@ -66,9 +67,11 @@ export function MemoryModal({
             <img
               src={memory.photo}
               alt=""
-              className={`mx-auto h-auto w-auto max-h-[62dvh] object-contain ${
-                wide ? "max-w-[min(86vw,48rem)]" : "max-w-[min(86vw,24rem)]"
-              }`}
+              className={`mx-auto h-auto w-auto object-contain ${
+                compact
+                  ? "max-h-[min(38dvh,20rem)]"
+                  : "max-h-[min(56dvh,28rem)]"
+              } ${wide ? "max-w-[min(86vw,48rem)]" : "max-w-[min(86vw,24rem)]"}`}
               onLoad={(event) => {
                 const image = event.currentTarget;
                 setRatio(image.naturalWidth / image.naturalHeight);
@@ -77,13 +80,13 @@ export function MemoryModal({
             />
           )}
         </div>
-        <p className="mt-5 text-center font-body text-lg leading-7 text-ink sm:text-xl">
+        <p className="mt-3 shrink-0 text-center font-body text-base leading-6 text-ink sm:mt-5 sm:text-xl sm:leading-7">
           {memory.caption}
         </p>
         <button
           type="button"
           onClick={onClose}
-          className="mx-auto mt-5 block font-display text-[0.65rem] tracking-[0.28em] text-royal-mid uppercase transition hover:text-royal"
+          className="mx-auto mt-3 block shrink-0 font-display text-[0.65rem] tracking-[0.28em] text-royal-mid uppercase transition hover:text-royal sm:mt-5"
         >
           Fechar
         </button>

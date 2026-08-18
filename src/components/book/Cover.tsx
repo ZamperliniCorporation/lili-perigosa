@@ -49,7 +49,7 @@ export function CoverArt({ page }: CoverArtProps) {
       <CornerOrnament className="absolute right-3 bottom-3 h-10 w-10 rotate-180" />
 
       <div className="relative flex h-full flex-col items-center justify-between px-7 py-10 pl-10">
-        <CoronaSun className="h-[4.5rem] w-[4.5rem] drop-shadow-[0_0_18px_rgba(232,197,71,0.75)]" />
+        <CoronaSun className="h-[4.5rem] w-[4.5rem]" />
         <div className="text-center">
           <p className="font-script text-5xl leading-none text-gold-bright sm:text-6xl">
             {page.title}
@@ -58,7 +58,7 @@ export function CoverArt({ page }: CoverArtProps) {
             {page.subtitle}
           </p>
         </div>
-        <Lantern className="h-14 w-8" special />
+        <Lantern className="h-14 w-8" special quiet />
       </div>
     </div>
   );
@@ -97,7 +97,7 @@ export function BackCoverArt({
       <CornerOrnament className="absolute right-5 bottom-3 h-10 w-10 rotate-180" />
 
       <div className="relative flex h-full flex-col items-center justify-center px-7 py-8 pr-10 text-center">
-        <CoronaSun className="h-12 w-12 drop-shadow-[0_0_18px_rgba(232,197,71,0.75)]" />
+        <CoronaSun className="h-12 w-12" />
         <MagicalText
           text={page.kicker}
           active={active}
