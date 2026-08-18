@@ -16,6 +16,24 @@ import { playOpenSpell, playPageTurn, unlockMagicAudio } from "@/lib/magicAudio"
 import { story } from "@/lib/story";
 import type { BackCoverPage, ChapterPage, CoverPage } from "@/lib/story";
 
+const PROGRESS_KEY = "lili-perigosa-progress";
+
+function readProgress() {
+  try {
+    const raw = sessionStorage.getItem(PROGRESS_KEY);
+    if (!raw) {
+      return null;
+    }
+    const parsed = JSON.parse(raw) as { index?: number };
+    if (typeof parsed.index !== "number" || parsed.index < 0) {
+      return null;
+    }
+    return parsed.index;
+  } catch {
+    return null;
+  }
+}
+
 const pageMotion = {
   initial: { opacity: 0, scale: 0.98 },
   animate: { opacity: 1, scale: 1 },
@@ -29,10 +47,12 @@ const chapters = story.filter(
 );
 
 export function StoryExperience() {
+  const [booting, setBooting] = useState(true);
   const [overture, setOverture] = useState<"gate" | "playing" | "done">("gate");
   const [index, setIndex] = useState(0);
   const [navVisible, setNavVisible] = useState(false);
   const [bookBusy, setBookBusy] = useState(false);
+  const [compact, setCompact] = useState(false);
   const previousIndex = useRef(0);
   const page = story[index];
   const lastIndex = story.length - 1;
@@ -53,6 +73,36 @@ export function StoryExperience() {
     void unlockMagicAudio();
     setOverture("playing");
   }
+
+  useEffect(() => {
+    const saved = readProgress();
+    if (saved !== null && saved > 0) {
+      setIndex(Math.min(saved, lastIndex));
+      setOverture("done");
+    }
+    setBooting(false);
+
+    const media = window.matchMedia("(max-width: 767px)");
+    const sync = () => setCompact(media.matches);
+    sync();
+    if (typeof media.addEventListener === "function") {
+      media.addEventListener("change", sync);
+      return () => media.removeEventListener("change", sync);
+    }
+    media.addListener(sync);
+    return () => media.removeListener(sync);
+  }, [lastIndex]);
+
+  useEffect(() => {
+    if (overture !== "done") {
+      return;
+    }
+    try {
+      sessionStorage.setItem(PROGRESS_KEY, JSON.stringify({ index }));
+    } catch {
+      return;
+    }
+  }, [index, overture]);
 
   function goTo(nextIndex: number, force = false) {
     if (!storyReady || (bookBusy && !force)) {
@@ -125,7 +175,7 @@ export function StoryExperience() {
 
     const timeout = window.setTimeout(
       () => setNavVisible(true),
-      openedFromCover || page.kind === "back" ? 1600 : 250,
+      openedFromCover || page.kind === "back" ? 450 : 180,
     );
 
     return () => window.clearTimeout(timeout);
@@ -134,14 +184,18 @@ export function StoryExperience() {
   return (
     <main className="relative h-dvh w-full overflow-hidden">
       <NightSky />
-      {overture !== "gate" &&
+      {!booting &&
+      overture !== "gate" &&
       page.kind !== "lanterns" &&
       page.kind !== "video" &&
-      page.kind !== "memories" ? (
+      page.kind !== "memories" &&
+      !(compact && isBookStage) ? (
         <AmbientLanterns sides={page.kind === "dedications"} />
       ) : null}
-      {overture !== "gate" ? <SoundToggle /> : null}
+      {!booting && overture !== "gate" ? <SoundToggle /> : null}
 
+      {booting ? null : (
+      <>
       <AnimatePresence>
         {overture === "gate" ? (
           <OpeningGate key="gate" onStart={startOpening} />
@@ -240,6 +294,8 @@ export function StoryExperience() {
           </motion.div>
         ) : null}
       </AnimatePresence>
+      </>
+      )}
     </main>
   );
 }

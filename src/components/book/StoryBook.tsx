@@ -67,7 +67,6 @@ export function StoryBook({
   const openRef = useRef(isOpen);
   const chapterRef = useRef(chapterIndex);
   const [inkDelay, setInkDelay] = useState(800);
-  const [pascalReady, setPascalReady] = useState(true);
   const [mountLeaves, setMountLeaves] = useState(isOpen);
   const closed = !isOpen;
 
@@ -87,25 +86,20 @@ export function StoryBook({
     if (justClosed) {
       if (showBack) {
         setInkDelay(1100);
-        setPascalReady(false);
         onBusyChange?.(true);
         const timeout = window.setTimeout(() => {
-          setPascalReady(true);
           onBusyChange?.(false);
         }, 1600);
         return () => window.clearTimeout(timeout);
       }
-      setPascalReady(true);
       onBusyChange?.(false);
       return;
     }
 
     if (justOpened) {
       setInkDelay(800);
-      setPascalReady(false);
       onBusyChange?.(true);
       const timeout = window.setTimeout(() => {
-        setPascalReady(true);
         onBusyChange?.(false);
       }, 1550);
       return () => window.clearTimeout(timeout);
@@ -116,10 +110,8 @@ export function StoryBook({
     }
 
     setInkDelay(120);
-    setPascalReady(false);
     onBusyChange?.(true);
     const timeout = window.setTimeout(() => {
-      setPascalReady(true);
       onBusyChange?.(false);
     }, TURN_MS + 40);
     return () => window.clearTimeout(timeout);
@@ -184,6 +176,9 @@ export function StoryBook({
 
           {mountLeaves
             ? chapters.map((page, index) => {
+            if (Math.abs(index - chapterIndex) > 1) {
+              return null;
+            }
             const turned = isOpen && index < chapterIndex;
             const current = isOpen && index === chapterIndex;
 
@@ -225,7 +220,7 @@ export function StoryBook({
           })
             : null}
 
-          {mountLeaves
+          {mountLeaves && wide
             ? [0, 1].map((leaf) => (
             <motion.div
               key={`flyleaf-${leaf}`}
@@ -306,14 +301,15 @@ export function StoryBook({
             className="pointer-events-none absolute inset-0 z-[80] overflow-visible"
             style={{ transformStyle: "flat" }}
           >
-            {pascalReady && closed ? (
+            {closed ? (
               <Pascal
                 spot={showBack ? "bottom-left" : "bottom-right"}
                 pose="stand"
+                settle
                 className="pointer-events-auto"
               />
             ) : null}
-            {pascalReady && isOpen && chapters[chapterIndex]?.pascal ? (
+            {isOpen && chapters[chapterIndex]?.pascal ? (
               <Pascal
                 key={chapters[chapterIndex].id}
                 spot={chapters[chapterIndex].pascal}
@@ -326,18 +322,17 @@ export function StoryBook({
       </div>
 
       <div className="relative mt-6 flex min-h-12 w-full max-w-[min(92vw,36rem)] items-center justify-center">
-        <motion.button
-          type="button"
-          onClick={onOpen}
-          disabled={isOpen || showBack}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isOpen || showBack ? 0 : 1 }}
-          transition={{ delay: isOpen || showBack ? 0 : 0.45, duration: 0.3 }}
-          className="absolute rounded-full border border-gold/50 bg-gold px-8 py-3 font-display text-xs tracking-[0.28em] text-royal-deep uppercase shadow-[0_0_24px_rgba(232,197,71,0.4)] transition hover:bg-gold-bright disabled:pointer-events-none"
-        >
-          {cover.cta}
-        </motion.button>
-        {footer}
+        {isOpen || showBack ? (
+          footer
+        ) : (
+          <button
+            type="button"
+            onClick={onOpen}
+            className="rounded-full border border-gold/50 bg-gold px-8 py-3 font-display text-xs tracking-[0.28em] text-royal-deep uppercase shadow-[0_0_24px_rgba(232,197,71,0.4)] [@media(hover:hover)]:hover:bg-gold-bright"
+          >
+            {cover.cta}
+          </button>
+        )}
       </div>
     </div>
   );

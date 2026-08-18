@@ -49,12 +49,14 @@ type PascalProps = {
   spot?: PascalSpot;
   pose?: PascalPose;
   className?: string;
+  settle?: boolean;
 };
 
 export function Pascal({
   spot = "bottom-right",
   pose = "stand",
   className = "",
+  settle = false,
 }: PascalProps) {
   const flip = FLIP[spot];
   const photo = POSE[pose];
@@ -65,10 +67,9 @@ export function Pascal({
       type="button"
       aria-label="Pascal está escondido aqui"
       className={`absolute z-40 cursor-pointer ${SPOT_CLASS[spot]} ${className}`}
-      initial={{ x: enter.x, y: enter.y }}
+      initial={settle ? false : { x: enter.x, y: enter.y }}
       animate={{ x: 0, y: 0 }}
       transition={{ type: "spring", stiffness: 260, damping: 22 }}
-      whileHover={{ scale: 1.06 }}
       whileTap={{ scale: 0.96 }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}

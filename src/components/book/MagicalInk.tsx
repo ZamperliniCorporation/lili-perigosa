@@ -328,10 +328,15 @@ export function MagicalText({
   const tipRef = useRef<HTMLSpanElement>(null);
   const [count, setCount] = useState(0);
   const [linger, setLinger] = useState(false);
+  const [dust, setDust] = useState(false);
   const chars = Array.from(text);
   const writing = active && count > 0 && count < chars.length;
   const accentStart = accent ? text.lastIndexOf(accent) : -1;
   const accentEnd = accentStart >= 0 && accent ? accentStart + accent.length : -1;
+
+  useEffect(() => {
+    setDust(window.innerWidth >= 768);
+  }, []);
 
   useEffect(() => {
     if (!active) {
@@ -352,8 +357,9 @@ export function MagicalText({
       if (index >= letters.length) {
         return;
       }
+      const step = window.innerWidth < 768 ? 3 : 1;
       timeoutId = window.setTimeout(
-        () => writeNext(index + 1),
+        () => writeNext(Math.min(index + step, letters.length)),
         charDelay(letters[index] ?? " ", speed),
       );
     };
@@ -386,7 +392,7 @@ export function MagicalText({
       aria-label={text}
       className={`relative ${className}`}
     >
-      {active ? (
+      {active && dust && (writing || linger) ? (
         <DustRibbon wrapRef={wrapRef} tipRef={tipRef} writing={writing} />
       ) : null}
       {chars.map((char, index) => {

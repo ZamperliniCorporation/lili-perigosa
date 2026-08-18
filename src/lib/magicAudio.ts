@@ -203,6 +203,9 @@ function playPaperLayer(
 }
 
 export async function playPageTurn(direction: 1 | -1 = 1) {
+  if (typeof window !== "undefined" && window.innerWidth < 768) {
+    return;
+  }
   const audio = await resume();
   if (muted || !audio || !context || !master) {
     return;

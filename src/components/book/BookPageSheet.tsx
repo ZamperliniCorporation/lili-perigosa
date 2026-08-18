@@ -28,9 +28,11 @@ export function BookPageSheet({
         ❧
       </div>
       <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-[linear-gradient(to_left,rgba(58,39,24,0.12),transparent)]" />
-      <div className="h-full px-5 py-4 sm:px-8 sm:py-5">
-        <ChapterContent page={page} active={active} writeDelay={writeDelay} />
-      </div>
+      {active ? (
+        <div className="h-full px-5 py-4 sm:px-8 sm:py-5">
+          <ChapterContent page={page} active writeDelay={writeDelay} />
+        </div>
+      ) : null}
     </div>
   );
 }
