@@ -12,7 +12,7 @@ export function ViolinStage({ page, onBack, onNext }: ViolinStageProps) {
   return (
     <div className="relative z-10 flex h-full flex-col items-center justify-center px-6">
       <CoronaSun className="h-12 w-12 drop-shadow-[0_0_16px_rgba(232,197,71,0.7)]" />
-      <h2 className="mt-4 font-display text-3xl text-gold-bright sm:text-4xl">
+      <h2 className="mt-4 w-full px-2 text-center font-display text-2xl leading-tight text-gold-bright sm:text-4xl">
         {page.title}
       </h2>
       <div className="relative mt-8 w-full max-w-3xl">
@@ -30,7 +30,7 @@ export function ViolinStage({ page, onBack, onNext }: ViolinStageProps) {
           className="!-right-3 !-bottom-2 origin-bottom scale-125 sm:!-right-7 sm:!-bottom-3"
         />
       </div>
-      <div className="mt-8 flex items-center gap-8">
+      <div className="mt-8 flex w-full max-w-3xl flex-wrap items-center justify-center gap-5 px-2 sm:gap-8">
         <button
           type="button"
           onClick={onBack}

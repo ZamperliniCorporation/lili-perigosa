@@ -20,27 +20,32 @@ export function DedicationLanterns({
   onBack,
   onBusyChange,
 }: DedicationLanternsProps) {
+  const items = page.items ?? [];
   const [step, setStep] = useState(0);
   const [rising, setRising] = useState(false);
   const [open, setOpen] = useState(false);
-  const item = page.items[step];
+  const safeStep = Math.min(Math.max(step, 0), Math.max(items.length - 1, 0));
+  const item = items[safeStep];
 
   useEffect(() => {
-    onBusyChange?.(rising || open);
-  }, [open, onBusyChange, rising]);
+    for (const memory of items) {
+      const image = new window.Image();
+      image.src = memory.photo;
+    }
+  }, [items]);
 
   useEffect(() => {
     return () => onBusyChange?.(false);
   }, [onBusyChange]);
 
   useEffect(() => {
-    if (!rising) {
+    if (!rising || !item) {
       return;
     }
 
     const timeout = window.setTimeout(() => setOpen(true), 1600);
     return () => window.clearTimeout(timeout);
-  }, [rising, step]);
+  }, [item, rising, step]);
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
@@ -54,7 +59,7 @@ export function DedicationLanterns({
   }, [open, step]);
 
   function release() {
-    if (rising || open) {
+    if (!item || rising || open) {
       return;
     }
     setRising(true);
@@ -64,12 +69,16 @@ export function DedicationLanterns({
     setOpen(false);
     setRising(false);
 
-    if (step >= page.items.length - 1) {
+    if (safeStep >= items.length - 1) {
       onComplete();
       return;
     }
 
     setStep((current) => current + 1);
+  }
+
+  if (!item) {
+    return null;
   }
 
   return (
@@ -147,6 +156,7 @@ export function DedicationLanterns({
             memory={item}
             onClose={closeModal}
             backdrop={false}
+            waitForPhoto
           />
         ) : null}
       </AnimatePresence>

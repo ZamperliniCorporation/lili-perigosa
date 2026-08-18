@@ -11,6 +11,7 @@ import { DedicationLanterns } from "@/components/lanterns/DedicationLanterns";
 import { LanternFestival } from "@/components/lanterns/LanternFestival";
 import { MemorySky } from "@/components/memories/MemorySky";
 import { StoryNav } from "@/components/story/StoryNav";
+import { CallStage } from "@/components/story/CallStage";
 import { ViolinStage } from "@/components/video/ViolinStage";
 import { playOpenSpell, playPageTurn, unlockMagicAudio } from "@/lib/magicAudio";
 import { story } from "@/lib/story";
@@ -54,7 +55,7 @@ export function StoryExperience() {
   const [bookBusy, setBookBusy] = useState(false);
   const [compact, setCompact] = useState(false);
   const previousIndex = useRef(0);
-  const page = story[index];
+  const page = story[index] ?? story[0];
   const lastIndex = story.length - 1;
   const isBookStage =
     page.kind === "cover" || page.kind === "chapter" || page.kind === "back";
@@ -289,8 +290,19 @@ export function StoryExperience() {
             <MemorySky
               page={page}
               onBack={() => goTo(index - 1)}
+              onNext={() => goTo(index + 1)}
               onBusyChange={setBookBusy}
             />
+          </motion.div>
+        ) : null}
+        {storyReady && page.kind === "call" ? (
+          <motion.div
+            key="call"
+            {...pageMotion}
+            transition={{ duration: 0.7 }}
+            className="relative flex h-full flex-col items-center justify-center"
+          >
+            <CallStage page={page} onBack={() => goTo(index - 1)} />
           </motion.div>
         ) : null}
       </AnimatePresence>

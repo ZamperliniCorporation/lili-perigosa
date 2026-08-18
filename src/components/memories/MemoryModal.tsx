@@ -8,17 +8,28 @@ type MemoryModalProps = {
   memory: Memory;
   onClose: () => void;
   backdrop?: boolean;
+  waitForPhoto?: boolean;
 };
 
 export function MemoryModal({
   memory,
   onClose,
   backdrop = true,
+  waitForPhoto = true,
 }: MemoryModalProps) {
   const [missing, setMissing] = useState(false);
   const [ratio, setRatio] = useState<number | null>(null);
+  const [photoReady, setPhotoReady] = useState(false);
   const wide = (ratio ?? 0) >= 1.05;
   const compact = Boolean(memory.from);
+  const revealed = !waitForPhoto || photoReady || missing;
+
+  function handlePhoto(image: HTMLImageElement) {
+    if (image.naturalWidth > 0 && image.naturalHeight > 0) {
+      setRatio(image.naturalWidth / image.naturalHeight);
+    }
+    setPhotoReady(true);
+  }
 
   return (
     <motion.div
@@ -26,7 +37,7 @@ export function MemoryModal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.28 }}
+      transition={{ duration: 0.4 }}
     >
       <button
         type="button"
@@ -37,10 +48,10 @@ export function MemoryModal({
       <motion.div
         role="dialog"
         aria-modal="true"
-        initial={{ y: 28, scale: 0.94, opacity: 0 }}
-        animate={{ y: 0, scale: 1, opacity: 1 }}
-        exit={{ y: 16, scale: 0.96, opacity: 0 }}
-        transition={{ duration: 0.32, ease: [0.22, 0.72, 0.28, 1] }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+        exit={{ opacity: 0, y: 8 }}
+        transition={{ duration: 0.7, ease: [0.22, 0.72, 0.28, 1] }}
         className={`paper relative z-10 flex w-fit min-w-[18rem] max-h-[92dvh] flex-col overflow-hidden rounded-sm border-2 border-gold/70 px-5 pt-4 pb-4 shadow-[0_0_40px_rgba(232,197,71,0.22)] ${
           wide ? "max-w-[min(92vw,52rem)]" : "max-w-[min(92vw,28rem)]"
         }`}
@@ -72,10 +83,7 @@ export function MemoryModal({
                   ? "max-h-[min(38dvh,20rem)]"
                   : "max-h-[min(56dvh,28rem)]"
               } ${wide ? "max-w-[min(86vw,48rem)]" : "max-w-[min(86vw,24rem)]"}`}
-              onLoad={(event) => {
-                const image = event.currentTarget;
-                setRatio(image.naturalWidth / image.naturalHeight);
-              }}
+              onLoad={(event) => handlePhoto(event.currentTarget)}
               onError={() => setMissing(true)}
             />
           )}

@@ -72,6 +72,15 @@ export type MemoriesPage = {
   items: Memory[];
 };
 
+export type CallPage = {
+  kind: "call";
+  title: string;
+  subtitle: string;
+  cta: string;
+  phone: string;
+  message: string;
+};
+
 export type StoryPage =
   | CoverPage
   | ChapterPage
@@ -79,7 +88,8 @@ export type StoryPage =
   | LanternsPage
   | VideoPage
   | DedicationsPage
-  | MemoriesPage;
+  | MemoriesPage
+  | CallPage;
 
 export const story: StoryPage[] = [
   {
@@ -250,7 +260,7 @@ export const story: StoryPage[] = [
     items: [
       { id: "d1", photo: "/assets/dedications/01.jpeg", from: "Zamp", caption: "Você apareceu do nada e mudou a minha forma de ver a vida, te amo muito gatona!" },
       { id: "d2", photo: "/assets/dedications/02.jpeg", from: "Dani", caption: "Entre risos,segredos e momentos que nunca vão se apagar, a nossa amizade se tornou uma das coisas mais bonitas que a vida me deu." },
-      { id: "d3", photo: "/assets/dedications/03.jpg", caption: "A frase desta dedicatória entra aqui." },
+      { id: "d3", photo: "/assets/dedications/03.jpeg", from: "Lucas", caption: "Irmã que a vida me deu e agradeço muito por ter perto de mim, te amo pretonaaaaa." },
       { id: "d4", photo: "/assets/dedications/04.jpg", caption: "A frase desta dedicatória entra aqui." },
       { id: "d5", photo: "/assets/dedications/05.jpg", caption: "A frase desta dedicatória entra aqui." },
       { id: "d6", photo: "/assets/dedications/06.jpg", caption: "A frase desta dedicatória entra aqui." },
@@ -281,5 +291,13 @@ export const story: StoryPage[] = [
       { id: "18", photo: "/assets/memories/18.jpg", caption: "A frase desta foto entra aqui." },
       { id: "19", photo: "/assets/memories/19.jpg", caption: "A frase desta foto entra aqui." },
     ],
+  },
+  {
+    kind: "call",
+    title: "Se precisar",
+    subtitle: "É só clicar nesse botão mágico.",
+    cta: "Botão mágico",
+    phone: "5511983790224",
+    message: "Zamp preciso de você...",
   },
 ];

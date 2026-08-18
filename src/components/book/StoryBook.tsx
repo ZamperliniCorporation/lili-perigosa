@@ -311,7 +311,7 @@ export function StoryBook({
             ) : null}
             {isOpen && chapters[chapterIndex]?.pascal ? (
               <Pascal
-                key={chapters[chapterIndex].id}
+                key={chapters[chapterIndex]?.id}
                 spot={chapters[chapterIndex].pascal}
                 pose={chapters[chapterIndex].pascalPose}
                 className="pointer-events-auto"

@@ -32,10 +32,11 @@ const PLACES = [
 type MemorySkyProps = {
   page: MemoriesPage;
   onBack: () => void;
+  onNext: () => void;
   onBusyChange?: (busy: boolean) => void;
 };
 
-export function MemorySky({ page, onBack, onBusyChange }: MemorySkyProps) {
+export function MemorySky({ page, onBack, onNext, onBusyChange }: MemorySkyProps) {
   const [open, setOpen] = useState<Memory | null>(null);
   const [out, setOut] = useState<Set<string>>(new Set());
 
@@ -104,13 +105,22 @@ export function MemorySky({ page, onBack, onBusyChange }: MemorySkyProps) {
         );
       })}
 
-      <button
-        type="button"
-        onClick={onBack}
-        className="absolute bottom-6 left-1/2 z-20 -translate-x-1/2 font-display text-xs tracking-[0.28em] text-gold/80 uppercase transition hover:text-gold-bright"
-      >
-        Voltar às dedicatórias
-      </button>
+      <div className="absolute bottom-6 left-1/2 z-20 flex w-[min(92vw,28rem)] -translate-x-1/2 flex-col items-center gap-4 sm:flex-row sm:justify-center sm:gap-8">
+        <button
+          type="button"
+          onClick={onBack}
+          className="font-display text-xs tracking-[0.28em] text-gold/80 uppercase transition hover:text-gold-bright"
+        >
+          Voltar às dedicatórias
+        </button>
+        <button
+          type="button"
+          onClick={onNext}
+          className="rounded-full border border-gold/50 bg-gold px-7 py-3 font-display text-xs tracking-[0.28em] text-royal-deep uppercase shadow-[0_0_24px_rgba(232,197,71,0.4)] transition [@media(hover:hover)]:hover:bg-gold-bright"
+        >
+          Se precisar
+        </button>
+      </div>
 
       <Pascal
         spot="bottom-left"

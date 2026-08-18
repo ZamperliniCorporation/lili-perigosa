@@ -36,15 +36,23 @@ export function FilmOpening({ onComplete }: FilmOpeningProps) {
     <div className="absolute inset-0 z-20 overflow-hidden">
       <motion.div
         className="pointer-events-none absolute inset-x-0 top-0 z-40 bg-black"
-        initial={{ height: "11vh" }}
-        animate={{ height: 0 }}
-        transition={{ delay: 24.4, duration: 2.5, ease: [0.22, 0.72, 0.28, 1] }}
+        initial={{ height: 0 }}
+        animate={{ height: ["0vh", "11vh", "11vh", "0vh"] }}
+        transition={{
+          duration: 27,
+          times: [0, 0.09, 0.9, 1],
+          ease: [0.22, 0.72, 0.28, 1],
+        }}
       />
       <motion.div
         className="pointer-events-none absolute inset-x-0 bottom-0 z-40 bg-black"
-        initial={{ height: "11vh" }}
-        animate={{ height: 0 }}
-        transition={{ delay: 24.4, duration: 2.5, ease: [0.22, 0.72, 0.28, 1] }}
+        initial={{ height: 0 }}
+        animate={{ height: ["0vh", "11vh", "11vh", "0vh"] }}
+        transition={{
+          duration: 27,
+          times: [0, 0.09, 0.9, 1],
+          ease: [0.22, 0.72, 0.28, 1],
+        }}
       />
 
       {LANTERNS.map((lantern) => (
