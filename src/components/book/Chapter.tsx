@@ -1,7 +1,7 @@
 "use client";
 
 import { CoronaSun } from "@/components/atmosphere/CoronaSun";
-import { MagicalText } from "@/components/book/MagicalInk";
+import { MagicalText, inkDuration } from "@/components/book/MagicalInk";
 import type { ChapterBeat, ChapterPage } from "@/lib/story";
 
 type ChapterContentProps = {
@@ -19,11 +19,11 @@ export function ChapterContent({
   active = false,
   writeDelay = 0,
 }: ChapterContentProps) {
-  const titleDelay = writeDelay + page.chapter.length * 36 + 180;
-  const bodyDelay = titleDelay + page.title.length * 38 + 220;
+  const writingSpeed = 16;
+  const titleDelay = writeDelay + inkDuration(page.chapter, 18);
+  const bodyDelay = titleDelay + inkDuration(page.title, 18);
   const beats = beatsOf(page);
   const compact = beats.some((beat) => beat.kind === "speech") || beats.length > 2;
-  const writingSpeed = 32;
   let nextDelay = bodyDelay;
 
   return (
@@ -43,7 +43,7 @@ export function ChapterContent({
         text={page.chapter}
         active={active}
         delay={writeDelay}
-        speed={34}
+        speed={18}
         className={`${compact ? "mt-1.5" : "mt-3"} font-display text-[0.7rem] tracking-[0.32em] text-royal-mid uppercase`}
       />
       <MagicalText
@@ -51,7 +51,7 @@ export function ChapterContent({
         text={page.title}
         active={active}
         delay={titleDelay}
-        speed={36}
+        speed={18}
         className={`mt-1.5 font-display font-semibold text-ink ${
           compact ? "text-lg sm:text-xl" : "text-2xl sm:text-3xl"
         }`}
@@ -61,8 +61,8 @@ export function ChapterContent({
           const delay = nextDelay;
           const previous = beats[index - 1];
           nextDelay +=
-            beat.text.length * writingSpeed +
-            (beat.kind === "speech" ? 420 : beat.kind === "closing" ? 720 : 260);
+            inkDuration(beat.text, writingSpeed) +
+            (beat.kind === "speech" ? 70 : beat.kind === "closing" ? 110 : 50);
           const spacing =
             index === 0
               ? ""

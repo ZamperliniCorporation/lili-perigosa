@@ -11,22 +11,27 @@ type MagicalTextProps = {
   as?: "p" | "h2";
   accent?: string;
   accentClassName?: string;
+  sparkle?: boolean;
 };
 
 function charDelay(char: string, speed: number) {
   if (char === " ") {
-    return speed * 0.45;
+    return speed * 0.35;
   }
   if (char === "\n") {
-    return speed * 3.2;
+    return speed * 1.6;
   }
   if (/[.!?]/.test(char)) {
-    return speed * 2.6;
+    return speed * 1.35;
   }
   if (/[,;:]/.test(char)) {
-    return speed * 1.8;
+    return speed * 1.15;
   }
   return speed;
+}
+
+export function inkDuration(text: string, speed: number) {
+  return Math.ceil(Array.from(text).length / 4) * speed + 50;
 }
 
 type Particle = {
@@ -323,6 +328,7 @@ export function MagicalText({
   as: Tag = "p",
   accent,
   accentClassName = "text-royal-mid",
+  sparkle = true,
 }: MagicalTextProps) {
   const wrapRef = useRef<HTMLElement>(null);
   const tipRef = useRef<HTMLSpanElement>(null);
@@ -335,8 +341,8 @@ export function MagicalText({
   const accentEnd = accentStart >= 0 && accent ? accentStart + accent.length : -1;
 
   useEffect(() => {
-    setDust(window.innerWidth >= 768);
-  }, []);
+    setDust(sparkle && window.innerWidth >= 768);
+  }, [sparkle]);
 
   useEffect(() => {
     if (!active) {
@@ -357,7 +363,7 @@ export function MagicalText({
       if (index >= letters.length) {
         return;
       }
-      const step = window.innerWidth < 768 ? 3 : 1;
+      const step = window.innerWidth < 768 ? 6 : 2;
       timeoutId = window.setTimeout(
         () => writeNext(Math.min(index + step, letters.length)),
         charDelay(letters[index] ?? " ", speed),

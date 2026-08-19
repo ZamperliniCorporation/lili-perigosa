@@ -66,7 +66,8 @@ export function StoryBook({
   const wide = useWideScreen();
   const openRef = useRef(isOpen);
   const chapterRef = useRef(chapterIndex);
-  const [inkDelay, setInkDelay] = useState(800);
+  const backRef = useRef(showBack);
+  const [inkDelay, setInkDelay] = useState(220);
   const [mountLeaves, setMountLeaves] = useState(isOpen);
   const closed = !isOpen;
 
@@ -80,16 +81,18 @@ export function StoryBook({
     const justOpened = !openRef.current && isOpen;
     const justClosed = openRef.current && !isOpen;
     const chapterChanged = chapterRef.current !== chapterIndex;
+    const fromBack = backRef.current;
     openRef.current = isOpen;
     chapterRef.current = chapterIndex;
+    backRef.current = showBack;
 
     if (justClosed) {
       if (showBack) {
-        setInkDelay(1100);
+        setInkDelay(420);
         onBusyChange?.(true);
         const timeout = window.setTimeout(() => {
           onBusyChange?.(false);
-        }, 1600);
+        }, 1400);
         return () => window.clearTimeout(timeout);
       }
       onBusyChange?.(false);
@@ -97,11 +100,19 @@ export function StoryBook({
     }
 
     if (justOpened) {
-      setInkDelay(800);
+      if (fromBack) {
+        setInkDelay(120);
+        onBusyChange?.(true);
+        const timeout = window.setTimeout(() => {
+          onBusyChange?.(false);
+        }, TURN_MS + 40);
+        return () => window.clearTimeout(timeout);
+      }
+      setInkDelay(220);
       onBusyChange?.(true);
       const timeout = window.setTimeout(() => {
         onBusyChange?.(false);
-      }, 1550);
+      }, 1100);
       return () => window.clearTimeout(timeout);
     }
 
@@ -146,7 +157,10 @@ export function StoryBook({
             className="absolute inset-0 origin-left rounded-[2px] shadow-[0_28px_50px_rgba(0,0,0,0.45)]"
             style={{
               transform: "translateZ(-18px)",
-              background: "linear-gradient(160deg, #2a1040 0%, #1a0a28 100%)",
+              background:
+                isOpen && !showBack
+                  ? "linear-gradient(160deg, #f4ead4 0%, #e8d9b8 100%)"
+                  : "linear-gradient(160deg, #2a1040 0%, #1a0a28 100%)",
             }}
           />
 
@@ -179,7 +193,7 @@ export function StoryBook({
             if (Math.abs(index - chapterIndex) > 1) {
               return null;
             }
-            const turned = isOpen && index < chapterIndex;
+            const turned = (isOpen || showBack) && index < chapterIndex;
             const current = isOpen && index === chapterIndex;
 
             return (
@@ -189,6 +203,7 @@ export function StoryBook({
                 style={{
                   transformOrigin: "left center",
                   transformStyle: "preserve-3d",
+                  visibility: showBack ? "hidden" : "visible",
                   zIndex: isOpen ? leafZ(index, chapterIndex) : 10 - index,
                 }}
                 initial={false}
@@ -228,10 +243,11 @@ export function StoryBook({
               style={{
                 transformOrigin: "left center",
                 transformStyle: "preserve-3d",
+                visibility: showBack ? "hidden" : "visible",
                 zIndex: isOpen ? 45 + leaf : 34 - leaf,
               }}
               initial={false}
-              animate={{ rotateY: isOpen ? -180 : 0 }}
+              animate={{ rotateY: isOpen || showBack ? -180 : 0 }}
               transition={{
                 duration: 1.15,
                 ease: coverEase,
@@ -265,25 +281,22 @@ export function StoryBook({
             style={{
               transformOrigin: "left center",
               transformStyle: "preserve-3d",
-              zIndex: 40,
+              visibility: isOpen || showBack ? "hidden" : "visible",
+              zIndex: isOpen || showBack ? 8 : 40,
             }}
             initial={false}
-            animate={{ rotateY: isOpen ? -180 : 0 }}
+            animate={{ rotateY: isOpen || showBack ? -180 : 0 }}
             transition={{
               duration: 1.5,
               ease: coverEase,
-              delay: isOpen ? 0 : 0.16,
+              delay: isOpen ? 0 : showBack ? 0 : 0.16,
             }}
           >
             <div
               className="absolute inset-0 overflow-hidden rounded-[2px] border-2 border-gold/80 shadow-[0_0_28px_rgba(232,197,71,0.16)]"
               style={{ backfaceVisibility: "hidden", transformStyle: "flat" }}
             >
-              {showBack ? (
-                <BackCoverArt page={back} active={showBack} writeDelay={1100} />
-              ) : (
-                <CoverArt page={cover} />
-              )}
+              <CoverArt page={cover} />
             </div>
             <div
               className="absolute inset-0 overflow-hidden rounded-[2px]"
@@ -296,6 +309,37 @@ export function StoryBook({
               <PageBack />
             </div>
           </motion.button>
+
+          {showBack ? (
+          <motion.div
+            className="pointer-events-none absolute inset-0 rounded-[2px]"
+            style={{
+              transformOrigin: "right center",
+              transformStyle: "preserve-3d",
+              zIndex: 55,
+            }}
+            initial={{ rotateY: 180 }}
+            animate={{ rotateY: 0 }}
+            transition={{ duration: 1.5, ease: coverEase }}
+          >
+            <div
+              className="absolute inset-0 overflow-hidden rounded-[2px] border-2 border-gold/80 shadow-[0_0_28px_rgba(232,197,71,0.16)]"
+              style={{ backfaceVisibility: "hidden", transformStyle: "flat" }}
+            >
+              <BackCoverArt page={back} active writeDelay={420} />
+            </div>
+            <div
+              className="absolute inset-0 overflow-hidden rounded-[2px]"
+              style={{
+                backfaceVisibility: "hidden",
+                transform: "rotateY(180deg)",
+                transformStyle: "flat",
+              }}
+            >
+              <PageBack />
+            </div>
+          </motion.div>
+          ) : null}
 
           <div
             className="pointer-events-none absolute inset-0 z-[80] overflow-visible"

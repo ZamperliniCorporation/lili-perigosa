@@ -1,7 +1,7 @@
 "use client";
 
 import { CoronaSun } from "@/components/atmosphere/CoronaSun";
-import { MagicalText } from "@/components/book/MagicalInk";
+import { MagicalText, inkDuration } from "@/components/book/MagicalInk";
 import type { BackCoverPage, CoverPage } from "@/lib/story";
 
 function CornerOrnament({ className = "" }: { className?: string }) {
@@ -62,6 +62,8 @@ export function CoverArt({ page }: CoverArtProps) {
           <img
             src="/assets/capa_lili.jpeg"
             alt=""
+            fetchPriority="high"
+            decoding="async"
             className="h-full w-full object-cover object-[28%_28%]"
           />
         </div>
@@ -81,9 +83,9 @@ export function BackCoverArt({
   active = false,
   writeDelay = 0,
 }: BackCoverArtProps) {
-  const bodyDelay = writeDelay + page.kicker.length * 34 + 200;
-  const promiseDelay = bodyDelay + page.body.length * 32 + 360;
-  const signDelay = promiseDelay + page.promise.length * 32 + 420;
+  const bodyDelay = writeDelay + inkDuration(page.kicker, 16);
+  const promiseDelay = bodyDelay + inkDuration(page.body, 14);
+  const signDelay = promiseDelay + inkDuration(page.promise, 14);
 
   return (
     <div className="leather relative flex h-full flex-col overflow-hidden rounded-[2px]">
@@ -108,14 +110,16 @@ export function BackCoverArt({
           text={page.kicker}
           active={active}
           delay={writeDelay}
-          speed={34}
+          speed={16}
+          sparkle={false}
           className="mt-4 font-display text-[0.65rem] tracking-[0.38em] text-gold/90 uppercase"
         />
         <MagicalText
           text={page.body}
           active={active}
           delay={bodyDelay}
-          speed={32}
+          speed={14}
+          sparkle={false}
           accent="princesa Lili"
           accentClassName="text-[#e4c8ff]"
           className="mt-4 max-w-[16.5rem] text-[0.95rem] leading-6 text-gold-bright/90 sm:text-base sm:leading-7"
@@ -124,14 +128,16 @@ export function BackCoverArt({
           text={page.promise}
           active={active}
           delay={promiseDelay}
-          speed={32}
+          speed={14}
+          sparkle={false}
           className="mt-4 max-w-[16.5rem] text-sm leading-6 text-gold/85 sm:text-[0.95rem]"
         />
         <MagicalText
           text={page.signature}
           active={active}
           delay={signDelay}
-          speed={36}
+          speed={16}
+          sparkle={false}
           className="mt-6 font-script text-3xl leading-none text-gold-bright sm:text-4xl"
         />
       </div>
