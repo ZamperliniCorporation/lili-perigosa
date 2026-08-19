@@ -2,7 +2,6 @@
 
 import { CoronaSun } from "@/components/atmosphere/CoronaSun";
 import { MagicalText } from "@/components/book/MagicalInk";
-import { Lantern } from "@/components/lanterns/Lantern";
 import type { BackCoverPage, CoverPage } from "@/lib/story";
 
 function CornerOrnament({ className = "" }: { className?: string }) {
@@ -33,7 +32,7 @@ type CoverArtProps = {
 export function CoverArt({ page }: CoverArtProps) {
   return (
     <div className="leather relative flex h-full flex-col overflow-hidden rounded-[2px]">
-      <div className="leather-spine pointer-events-none absolute inset-y-0 left-0 w-3.5 shadow-[2px_0_8px_rgba(0,0,0,0.35)]">
+      <div className="leather-spine pointer-events-none absolute inset-y-0 left-0 z-20 w-3.5 shadow-[2px_0_8px_rgba(0,0,0,0.35)]">
         <span className="absolute top-[18%] right-1 left-1 h-px bg-gold/50" />
         <span className="absolute top-[38%] right-1 left-1 h-px bg-gold/50" />
         <span className="absolute top-[62%] right-1 left-1 h-px bg-gold/50" />
@@ -48,17 +47,24 @@ export function CoverArt({ page }: CoverArtProps) {
       <CornerOrnament className="absolute bottom-3 left-5 h-10 w-10 -rotate-90" />
       <CornerOrnament className="absolute right-3 bottom-3 h-10 w-10 rotate-180" />
 
-      <div className="relative flex h-full flex-col items-center justify-between px-7 py-10 pl-10">
-        <CoronaSun className="h-[4.5rem] w-[4.5rem]" />
-        <div className="text-center">
+      <div className="relative flex h-full flex-col items-center px-7 pt-6 pb-6 pl-10">
+        <CoronaSun className="h-14 w-14 sm:h-16 sm:w-16" />
+        <div className="mt-2.5 text-center">
           <p className="font-script text-5xl leading-none text-gold-bright sm:text-6xl">
             {page.title}
           </p>
-          <p className="mt-4 font-display text-[0.65rem] tracking-[0.38em] text-gold/90 uppercase">
+          <p className="mt-2.5 font-display text-[0.65rem] tracking-[0.38em] text-gold/90 uppercase">
             {page.subtitle}
           </p>
         </div>
-        <Lantern className="h-14 w-8" special quiet />
+        <div className="mt-4 min-h-0 w-full flex-1 overflow-hidden rounded-sm border-2 border-gold/70">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/assets/capa_lili.jpeg"
+            alt=""
+            className="h-full w-full object-cover object-[28%_28%]"
+          />
+        </div>
       </div>
     </div>
   );
