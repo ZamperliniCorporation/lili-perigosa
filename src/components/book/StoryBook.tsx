@@ -69,13 +69,50 @@ export function StoryBook({
   const backRef = useRef(showBack);
   const [inkDelay, setInkDelay] = useState(220);
   const [mountLeaves, setMountLeaves] = useState(isOpen);
+  const [lastFolded, setLastFolded] = useState(false);
+  const [pascalIndex, setPascalIndex] = useState(chapterIndex);
+  const [pascalVisible, setPascalVisible] = useState(false);
   const closed = !isOpen;
+  const pascalPage = chapters[pascalIndex];
+  const mobileSpread = isOpen && !wide && !showBack;
+  const openX = isOpen && !showBack ? (wide ? 180 : "50%") : 0;
+  const openScale = mobileSpread ? 0.48 : 1;
+  const bookBoxClass =
+    "h-[min(74vh,40rem)] max-h-[74dvh] w-[min(86vw,26rem)]";
+  const bookMove = {
+    duration: showBack && !lastFolded ? TURN_MS / 1000 : isOpen ? 1.35 : 0.8,
+    ease: coverEase,
+  };
 
   useEffect(() => {
     if (isOpen) {
       setMountLeaves(true);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!showBack) {
+      setLastFolded(false);
+      return;
+    }
+    setLastFolded(false);
+    const timeout = window.setTimeout(() => setLastFolded(true), TURN_MS);
+    return () => window.clearTimeout(timeout);
+  }, [showBack]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setPascalVisible(false);
+      setPascalIndex(chapterIndex);
+      return;
+    }
+    setPascalVisible(false);
+    const timeout = window.setTimeout(() => {
+      setPascalIndex(chapterIndex);
+      setPascalVisible(true);
+    }, TURN_MS + 520);
+    return () => window.clearTimeout(timeout);
+  }, [chapterIndex, isOpen]);
 
   useEffect(() => {
     const justOpened = !openRef.current && isOpen;
@@ -129,25 +166,29 @@ export function StoryBook({
   }, [chapterIndex, isOpen, onBusyChange, showBack]);
 
   return (
-    <div className="relative z-10 flex flex-col items-center px-6">
-      <div className="book-scene">
+    <div className="relative z-10 flex flex-col items-center px-3 sm:px-6">
+      <div className="book-scene relative">
         <motion.div
-          className="relative h-[min(74vh,40rem)] max-h-[74dvh] w-[min(86vw,26rem)] overflow-visible"
-          style={{ transformStyle: "preserve-3d" }}
+          className={`relative ${bookBoxClass} overflow-visible`}
+          style={{
+            transformStyle: "preserve-3d",
+            transformOrigin: mobileSpread ? "left center" : "center center",
+          }}
           initial={{ opacity: 0, y: 28, rotateY: -18, rotateX: 8 }}
           animate={{
             opacity: 1,
             y: 0,
-            rotateY: isOpen ? 0 : showBack ? 18 : -18,
-            rotateX: isOpen ? 0 : 8,
-            x: isOpen && wide ? 180 : 0,
+            rotateY: isOpen ? 0 : showBack && lastFolded ? 18 : showBack ? 0 : -18,
+            rotateX: isOpen || (showBack && !lastFolded) ? 0 : 8,
+            x: openX,
+            scale: openScale,
           }}
           whileHover={
-            wide && !isOpen
+            wide && !isOpen && (!showBack || lastFolded)
               ? { y: -8, rotateY: showBack ? 12 : -12 }
               : undefined
           }
-          transition={{ duration: isOpen ? 1.35 : 0.8, ease: coverEase }}
+          transition={bookMove}
         >
           <div
             className={`pointer-events-none absolute -bottom-8 h-8 rounded-[100%] bg-black/40 ${showBack ? "right-[8%] left-[4%]" : "left-[8%] right-[4%]"}`}
@@ -158,7 +199,7 @@ export function StoryBook({
             style={{
               transform: "translateZ(-18px)",
               background:
-                isOpen && !showBack
+                isOpen || showBack
                   ? "linear-gradient(160deg, #f4ead4 0%, #e8d9b8 100%)"
                   : "linear-gradient(160deg, #2a1040 0%, #1a0a28 100%)",
             }}
@@ -168,7 +209,7 @@ export function StoryBook({
             className={`page-edge absolute top-[7px] bottom-[7px] ${showBack ? "rounded-l-[3px]" : "rounded-r-[3px]"}`}
             style={showBack ? { right: "100%" } : { left: "100%" }}
             initial={false}
-            animate={{ opacity: closed ? 1 : 0, width: closed ? 16 : 0 }}
+            animate={{ opacity: closed && (!showBack || lastFolded) ? 1 : 0, width: closed && (!showBack || lastFolded) ? 16 : 0 }}
             transition={{ duration: 0.45 }}
           />
 
@@ -176,7 +217,7 @@ export function StoryBook({
             className="book-ribbon absolute top-[-6px] z-30 h-28 w-3 rounded-b-sm"
             style={showBack ? { left: "18%" } : { right: "18%" }}
             initial={false}
-            animate={{ opacity: closed ? 1 : 0, y: closed ? 0 : -12 }}
+            animate={{ opacity: closed && (!showBack || lastFolded) ? 1 : 0, y: closed && (!showBack || lastFolded) ? 0 : -12 }}
             transition={{ duration: 0.35 }}
           />
 
@@ -184,7 +225,10 @@ export function StoryBook({
             className={`absolute top-1/2 z-30 h-10 w-4 -translate-y-1/2 border border-gold-bright/80 bg-[linear-gradient(90deg,#c49212,#ffe9a3,#c49212)] shadow-[0_0_10px_rgba(232,197,71,0.45)] ${showBack ? "rounded-l-sm" : "rounded-r-sm"}`}
             style={showBack ? { right: "100%" } : { left: "100%" }}
             initial={false}
-            animate={{ opacity: closed ? 1 : 0, x: closed ? 0 : showBack ? -8 : 8 }}
+            animate={{
+              opacity: closed && (!showBack || lastFolded) ? 1 : 0,
+              x: closed && (!showBack || lastFolded) ? 0 : showBack ? -8 : 8,
+            }}
             transition={{ duration: 0.3 }}
           />
 
@@ -193,8 +237,9 @@ export function StoryBook({
             if (Math.abs(index - chapterIndex) > 1) {
               return null;
             }
-            const turned = (isOpen || showBack) && index < chapterIndex;
+            const turned = isOpen && index < chapterIndex;
             const current = isOpen && index === chapterIndex;
+            const hideLeaf = showBack && (index < chapterIndex || lastFolded);
 
             return (
               <motion.div
@@ -203,7 +248,7 @@ export function StoryBook({
                 style={{
                   transformOrigin: "left center",
                   transformStyle: "preserve-3d",
-                  visibility: showBack ? "hidden" : "visible",
+                  visibility: hideLeaf ? "hidden" : "visible",
                   zIndex: isOpen ? leafZ(index, chapterIndex) : 10 - index,
                 }}
                 initial={false}
@@ -235,8 +280,8 @@ export function StoryBook({
           })
             : null}
 
-          {mountLeaves && wide
-            ? [0, 1].map((leaf) => (
+          {mountLeaves
+            ? (wide ? [0, 1] : [0]).map((leaf) => (
             <motion.div
               key={`flyleaf-${leaf}`}
               className="pointer-events-none absolute inset-0"
@@ -320,18 +365,27 @@ export function StoryBook({
             }}
             initial={{ rotateY: 180 }}
             animate={{ rotateY: 0 }}
-            transition={{ duration: 1.5, ease: coverEase }}
+            transition={{ duration: TURN_MS / 1000, ease: coverEase }}
           >
             <div
               className="absolute inset-0 overflow-hidden rounded-[2px] border-2 border-gold/80 shadow-[0_0_28px_rgba(232,197,71,0.16)]"
-              style={{ backfaceVisibility: "hidden", transformStyle: "flat" }}
+              style={{
+                backfaceVisibility: "hidden",
+                WebkitBackfaceVisibility: "hidden",
+                transformStyle: "flat",
+              }}
             >
-              <BackCoverArt page={back} active writeDelay={420} />
+              <BackCoverArt
+                page={back}
+                active={showBack && lastFolded}
+                writeDelay={80}
+              />
             </div>
             <div
               className="absolute inset-0 overflow-hidden rounded-[2px]"
               style={{
                 backfaceVisibility: "hidden",
+                WebkitBackfaceVisibility: "hidden",
                 transform: "rotateY(180deg)",
                 transformStyle: "flat",
               }}
@@ -340,28 +394,32 @@ export function StoryBook({
             </div>
           </motion.div>
           ) : null}
-
-          <div
-            className="pointer-events-none absolute inset-0 z-[80] overflow-visible"
-            style={{ transformStyle: "flat" }}
-          >
-            {closed ? (
-              <Pascal
-                spot={showBack ? "bottom-left" : "bottom-right"}
-                pose="stand"
-                settle
-                className="pointer-events-auto"
-              />
-            ) : null}
-            {isOpen && chapters[chapterIndex]?.pascal ? (
-              <Pascal
-                key={chapters[chapterIndex]?.id}
-                spot={chapters[chapterIndex].pascal}
-                pose={chapters[chapterIndex].pascalPose}
-                className="pointer-events-auto"
-              />
-            ) : null}
-          </div>
+        </motion.div>
+        <motion.div
+          className={`pointer-events-none absolute top-0 left-0 z-[80] ${bookBoxClass} overflow-visible`}
+          initial={false}
+          animate={{ x: openX, scale: openScale }}
+          style={{
+            transformOrigin: mobileSpread ? "left center" : "center center",
+          }}
+          transition={bookMove}
+        >
+          {closed && (!showBack || lastFolded) ? (
+            <Pascal
+              spot={showBack ? "bottom-left" : "bottom-right"}
+              pose="stand"
+              settle
+              className="pointer-events-auto"
+            />
+          ) : null}
+          {isOpen && pascalVisible && pascalPage?.pascal ? (
+            <Pascal
+              key={pascalPage.id}
+              spot={pascalPage.pascal}
+              pose={pascalPage.pascalPose}
+              className="pointer-events-auto"
+            />
+          ) : null}
         </motion.div>
       </div>
 

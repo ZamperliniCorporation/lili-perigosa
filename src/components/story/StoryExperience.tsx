@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { FilmOpening, OpeningGate } from "@/components/atmosphere/FilmOpening";
 import { NightSky } from "@/components/atmosphere/NightSky";
-import { SoundToggle } from "@/components/atmosphere/SoundToggle";
 import { StoryBook } from "@/components/book/StoryBook";
 import { AmbientLanterns } from "@/components/lanterns/AmbientLanterns";
 import { DedicationLanterns } from "@/components/lanterns/DedicationLanterns";
@@ -193,7 +192,35 @@ export function StoryExperience() {
       !(compact && isBookStage) ? (
         <AmbientLanterns sides={page.kind === "dedications"} />
       ) : null}
-      {!booting && overture !== "gate" ? <SoundToggle /> : null}
+      {storyReady && page.kind !== "cover" && page.kind !== "chapter" ? (
+        <button
+          type="button"
+          aria-label="Voltar ao livro"
+          onClick={() => goTo(0, true)}
+          className="absolute top-4 right-4 z-50 flex h-10 items-center gap-2 rounded-full border border-gold/40 bg-night/50 px-3 text-gold-bright/90 backdrop-blur-sm transition hover:border-gold hover:text-gold-bright"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className="h-4 w-4"
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.7"
+          >
+            <path
+              d="M5 5.5 C5 4.7 5.7 4 6.5 4 H12 V20 H6.5 C5.7 20 5 19.3 5 18.5 Z"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M19 5.5 C19 4.7 18.3 4 17.5 4 H12 V20 H17.5 C18.3 20 19 19.3 19 18.5 Z"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span className="hidden font-display text-[0.65rem] tracking-[0.18em] uppercase sm:inline">
+            Livro
+          </span>
+        </button>
+      ) : null}
 
       {booting ? null : (
       <>
@@ -224,10 +251,19 @@ export function StoryExperience() {
               onOpen={() => goTo(1)}
               onBusyChange={setBookBusy}
               footer={
-                navVisible ? (
+                navVisible && page.kind === "back" ? (
+                  <button
+                    type="button"
+                    disabled={bookBusy}
+                    onClick={() => goTo(index + 1, true)}
+                    className="rounded-full border border-gold/50 bg-gold px-8 py-3 font-display text-xs tracking-[0.28em] text-royal-deep uppercase shadow-[0_0_24px_rgba(232,197,71,0.4)] disabled:opacity-40 [@media(hover:hover)]:hover:bg-gold-bright"
+                  >
+                    Continuar
+                  </button>
+                ) : navVisible ? (
                   <StoryNav
-                    index={index}
-                    total={story.length}
+                    index={chapterIndex}
+                    total={chapters.length}
                     disabled={bookBusy}
                     onPrev={() => goTo(index - 1)}
                     onNext={() => goTo(index + 1)}

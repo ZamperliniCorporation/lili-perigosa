@@ -35,6 +35,8 @@ export type ChapterPage = {
   beats?: ChapterBeat[];
   pascal?: PascalSpot;
   pascalPose?: "stand" | "lie";
+  polaroid?: string;
+  polaroidSpot?: "top-right" | "bottom";
 };
 
 export type LanternsPage = {
@@ -181,6 +183,7 @@ export const story: StoryPage[] = [
     body: "E o esperado aconteceu. Naquele dia o cavaleiro Zamp passou dos limites, ficou bem embriagado, e tiveram que levá-lo carregado por todo aquele vilarejo. Até o caminho da estrada foram rindo e se divertindo — até que o cavaleiro Zamp sentou no chão e, de lá, soltou tudo o que tinha dentro. Todos riram daquele momento. E foi ali que a princesa Lili cuidou desse cavaleiro pela primeira vez.",
     pascal: "bottom-right",
     pascalPose: "lie",
+    polaroid: "/assets/book/zamp.jpeg",
   },
   {
     kind: "chapter",
@@ -190,6 +193,8 @@ export const story: StoryPage[] = [
     body: "Desse dia em diante, nunca mais se separaram. Viraram uma grande família. Os cavaleiros frequentavam o castelo da princesa Lili sempre que podiam: lá se divertiam, colocavam o papo em dia e sempre estavam bebendo. Diziam que aquele lugar era próximo ao paraíso. A rainha do castelo, a rainha Ro, sempre os recebia de braços abertos, como filhos — e por isso eles sempre retornavam àquele lar.",
     pascal: "top-right",
     pascalPose: "stand",
+    polaroid: "/assets/book/aquele-lar.jpeg",
+    polaroidSpot: "bottom",
   },
   {
     kind: "chapter",
@@ -261,9 +266,9 @@ export const story: StoryPage[] = [
       { id: "d1", photo: "/assets/dedications/01.jpeg", from: "Zamp", caption: "Você apareceu do nada e mudou a minha forma de ver a vida, te amo muito gatona!" },
       { id: "d2", photo: "/assets/dedications/02.jpeg", from: "Dani", caption: "Entre risos,segredos e momentos que nunca vão se apagar, a nossa amizade se tornou uma das coisas mais bonitas que a vida me deu." },
       { id: "d3", photo: "/assets/dedications/03.jpeg", from: "Lucas", caption: "Irmã que a vida me deu e agradeço muito por ter perto de mim, te amo pretonaaaaa." },
-      { id: "d4", photo: "/assets/dedications/04.jpg", caption: "A frase desta dedicatória entra aqui." },
-      { id: "d5", photo: "/assets/dedications/05.jpg", caption: "A frase desta dedicatória entra aqui." },
-      { id: "d6", photo: "/assets/dedications/06.jpg", caption: "A frase desta dedicatória entra aqui." },
+      { id: "d4", photo: "/assets/dedications/04.jpeg", from: "Mamãe", caption: "Você traz luz para os meus dias, alegria pro meu coração, meu mundo é completo com seu carinho. Te amo princesa!" },
+      { id: "d5", photo: "/assets/dedications/05.jpeg", from: "Let", caption: "Minha princesa e parceira de vida, tudo ao seu lado é mágico! Te amo licó" },
+      { id: "d6", photo: "/assets/dedications/06.jpeg", from: "Duh", caption: "Que nossa amizade continue sendo meu porto seguro, meu sorriso nos dias difíceis e uma das melhores partes da minha vida. Te amo muito Lili" },
     ],
   },
   {
@@ -277,11 +282,11 @@ export const story: StoryPage[] = [
       { id: "4", photo: "/assets/memories/04.jpeg", caption: "Foto icônica, simplesmente." },
       { id: "5", photo: "/assets/memories/05.jpeg", caption: "Eu te amo tanto, minha princesa Lili." },
       { id: "6", photo: "/assets/memories/06.jpeg", caption: "Não estamos nesse momento, mas aí você tá muito Drake." },
-      { id: "7", photo: "/assets/memories/07.jpg", caption: "A frase desta foto entra aqui." },
-      { id: "8", photo: "/assets/memories/08.jpg", caption: "A frase desta foto entra aqui." },
-      { id: "9", photo: "/assets/memories/09.jpg", caption: "A frase desta foto entra aqui." },
-      { id: "10", photo: "/assets/memories/10.jpg", caption: "A frase desta foto entra aqui." },
-      { id: "11", photo: "/assets/memories/11.jpg", caption: "A frase desta foto entra aqui." },
+      { id: "7", photo: "/assets/memories/07.jpeg", caption: "Nas 4 faixa os drake que manda" },
+      { id: "8", photo: "/assets/memories/08.jpeg", caption: "Sempre vou estar do seu lado!" },
+      { id: "9", photo: "/assets/memories/09.jpeg", caption: "Você é o nosso orgulho!" },
+      { id: "10", photo: "/assets/memories/10.jpeg", caption: "Chama no codein (esse dia eu fiquei loucão)" },
+      { id: "11", photo: "/assets/memories/11.jpeg", caption: "Como eu amo esse seu sorriso!" },
       { id: "12", photo: "/assets/memories/12.jpg", caption: "A frase desta foto entra aqui." },
       { id: "13", photo: "/assets/memories/13.jpg", caption: "A frase desta foto entra aqui." },
       { id: "14", photo: "/assets/memories/14.jpg", caption: "A frase desta foto entra aqui." },

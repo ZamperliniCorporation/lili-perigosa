@@ -31,14 +31,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="pt-BR"
       className={`${cinzel.variable} ${cormorant.variable} ${script.variable} h-full antialiased`}
     >
-      <head>
-        <link
-          rel="preload"
-          as="image"
-          href="/assets/capa_lili.jpeg"
-          type="image/jpeg"
-        />
-      </head>
       <body className="min-h-full font-body">{children}</body>
     </html>
   );

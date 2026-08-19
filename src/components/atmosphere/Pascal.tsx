@@ -67,9 +67,13 @@ export function Pascal({
       type="button"
       aria-label="Pascal está escondido aqui"
       className={`absolute z-40 cursor-pointer ${SPOT_CLASS[spot]} ${className}`}
-      initial={settle ? false : { x: enter.x, y: enter.y }}
-      animate={{ x: 0, y: 0 }}
-      transition={{ type: "spring", stiffness: 260, damping: 22 }}
+      initial={settle ? false : { x: enter.x, y: enter.y, opacity: 0, scale: 0.92 }}
+      animate={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+      transition={
+        settle
+          ? { type: "spring", stiffness: 260, damping: 22 }
+          : { type: "spring", stiffness: 160, damping: 16, delay: 0.08 }
+      }
       whileTap={{ scale: 0.96 }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}

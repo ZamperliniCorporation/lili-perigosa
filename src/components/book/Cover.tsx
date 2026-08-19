@@ -47,7 +47,7 @@ export function CoverArt({ page }: CoverArtProps) {
       <CornerOrnament className="absolute bottom-3 left-5 h-10 w-10 -rotate-90" />
       <CornerOrnament className="absolute right-3 bottom-3 h-10 w-10 rotate-180" />
 
-      <div className="relative flex h-full flex-col items-center px-7 pt-6 pb-6 pl-10">
+      <div className="relative flex h-full flex-col items-center justify-center px-7 pt-6 pb-6 pl-10">
         <CoronaSun className="h-14 w-14 sm:h-16 sm:w-16" />
         <div className="mt-2.5 text-center">
           <p className="font-script text-5xl leading-none text-gold-bright sm:text-6xl">
@@ -56,16 +56,6 @@ export function CoverArt({ page }: CoverArtProps) {
           <p className="mt-2.5 font-display text-[0.65rem] tracking-[0.38em] text-gold/90 uppercase">
             {page.subtitle}
           </p>
-        </div>
-        <div className="mt-4 min-h-0 w-full flex-1 overflow-hidden rounded-sm border-2 border-gold/70">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/assets/capa_lili.jpeg"
-            alt=""
-            fetchPriority="high"
-            decoding="async"
-            className="h-full w-full object-cover object-[28%_28%]"
-          />
         </div>
       </div>
     </div>

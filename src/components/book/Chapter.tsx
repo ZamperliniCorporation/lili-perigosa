@@ -30,7 +30,7 @@ export function ChapterContent({
     <div
       className={`relative flex h-full flex-col items-center px-2 text-center ${
         compact ? "justify-start pt-1" : "justify-center"
-      }`}
+      } ${page.polaroidSpot === "bottom" ? "pb-[5.8rem] sm:pb-28" : ""}`}
     >
       <div
         className={`transition-opacity duration-500 ${active ? "opacity-100" : "opacity-0"}`}
